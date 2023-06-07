@@ -1,8 +1,5 @@
 #include "arquivo.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include "patricia.h"
 
 // Realiza a impressão do menu na tela
 // Pré-condição: nenhuma
@@ -45,14 +42,14 @@ int validateText(char *text){
 //Le o caminho do arquivo passado por input
 //Pre-condicao: Um caminho para um arquivo existente
 //Pos-condicao: Registro dos itens nos arquivos binarios
-void carregaArquivo (int op) {
+void carregaArquivo (int op, No* raiz){
     FILE *fr = loadPath();
     char text[100];
     while (fscanf(fr, "%[^\n]%*c", text) != EOF) {
         if (validateText(text)) {
             if (op == 0){
                 printf("Inserindo palavra: %s\n", text);
-                //insere a palavra
+                inserePalavra(text, raiz);
             }
             else {
                 printf("Removendo palavra: %s\n", text);

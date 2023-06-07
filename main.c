@@ -1,40 +1,41 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "arquivo.h"
+#include "patricia.h"
 
 int main() {
 
     int opcao;
     char text[50];
+    No* raiz = NULL;
+    raiz = criaNoRaiz();
 
     while(1){
         imprime_menu();
-        scanf("%d", &opcao);
+        scanf("%d%*c", &opcao);
         switch (opcao) {
             case 0:
                 printf("Fim do Programa\n");
                 return 0;
             case 1:
                 //Carregar arquivo de texto
-                carregaArquivo(0);
+                carregaArquivo(0, raiz);
                 break;
             case 2:
                 //Consultar palavra
                 printf("Entre com a palavra prefixo: ");
-                scanf("%*c%s%*c", text);
-                //consultaPalavra(text);
+                scanf("%s%*c", text);
+                //consultaPalavra(text, raiz);
                 break;
             case 3:
                 //Imprimir dicionario
-                //imprimeDicionario();
+                imprimeDicionario(raiz);
                 break;
             case 4:
                 //Carregar arquivo de stopwords
-                carregaArquivo(1);
+                carregaArquivo(1, raiz);
                 break;
             case 5:
                 //Imprimir subarvore por niveis
-                //imprimeNivel();
+                //imprimeNivel(raiz);
                 break;
             default:
                 printf("Entrada invalida\n");
