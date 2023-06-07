@@ -30,7 +30,7 @@ int main() {
                 break;
             case 4:
                 //Carregar arquivo de stopwords
-                //carregaArquivo(1);
+                carregaArquivo(1);
                 break;
             case 5:
                 //Imprimir subarvore por niveis
