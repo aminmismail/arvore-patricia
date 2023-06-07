@@ -76,15 +76,15 @@ void inserePalavra(char *str, No* raiz){
         raiz->filhos[0] = aux;
     }
     else{
-        for(i=0; )
-        if(findFirstDif(raiz->texto, str) == 0){
-            if(str[0] > raiz->texto[0]){
-                No* aux = criaNoFinal(str);
-                raiz->numFilhos++;
-                raiz->filhos[raiz->numFilhos]
+        for(i=0; i<raiz->numFilhos && str[0] < raiz->filhos[i]->texto[0]; i++){
+            if(findFirstDif(raiz->texto, str) == 0){
+                if(){
+                    No* aux = criaNoFinal(str);
+                    raiz->numFilhos++;
+                    raiz->filhos[raiz->numFilhos]
+                }
             }
         }
+
     }
-
-
 }
