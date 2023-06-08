@@ -12,7 +12,9 @@ int isPrefixo(const char* str1, const char* str2) {
 }
 
 No* criaNoFinal(char *text){
+    int i;
     No* aux = (No*) malloc(sizeof(No));
+    for(i=0; i < 1000; i++) aux->filhos[i] = NULL;
     aux->isFinal = 1;
     aux->isPalavra = 1;
     aux->numFilhos = 0;
@@ -21,11 +23,14 @@ No* criaNoFinal(char *text){
 }
 
 No* criaNoRaiz(){
+    int i;
     No* aux = (No*) malloc(sizeof(No));
+    for(i=0; i < 1000; i++) aux->filhos[i] = NULL;
     aux->isFinal = 0;
     aux->isPalavra = 0;
     aux->numFilhos = 0;
     strcpy(aux->texto, " ");
+
     return aux;
 }
 
@@ -37,37 +42,48 @@ No* criaNoInterno(No* no, int ind){
     return no;
 }
 
-void imprimeDicionarioAux(No* no, char* word){
-    int i;
-    if(no == NULL) return;
+No *buscaPos(No* no, char text[], int *pos) {
+    if (no == NULL) return NULL;
+    int i = 0;
+    for(i=0; i < no->numFilhos && text[0] < no->filhos[i]->texto[0]; i++);
+    if ()
+        return buscaPos(no->filhos[i], text, pos);
+    *pos = i;
+    return no;
+}
 
-    for(i = 0; i < no->numFilhos; i++){
+void imprimeDicionarioAux(No* no, char *word) { //colocar prefixo ainda
+    int i;
+    if (no == NULL) return;
+
+    int len = strlen(word);
+    strcat(word, no->texto);
+
+    if (no->isPalavra) {
+        word[len + strlen(no->texto)] = '\0';
+        printf("%s\n", word);
+    }
+
+    for (i = 0; i < no->numFilhos; i++) {
         imprimeDicionarioAux(no->filhos[i], word);
     }
 
-    strcat(word, no->texto);
-    if(no->isPalavra){
-        int final = strlen(word);
-        if(no->isFinal){
-            word[final] = '\0';
-            printf("%s\n", word);
-        }
-        else{
-            char word2[50];
-        }
-    }
-
-    imprimeDicionarioAux(no->filhos[i], word);
-
+    word[len] = '\0';
 }
 
+
 void imprimeDicionario(No* raiz){
-    char word[100];
+    char word[100] = {};
     imprimeDicionarioAux(raiz, word);
 }
 
+No* getPos(No* raiz, int *pos){
+    //if(raiz == NULL)
+}
+
+
 void inserePalavra(char *str, No* raiz){
-    int i=0;
+    /*int i=0;
     if(raiz == NULL) raiz = criaNoRaiz();
 
     if(raiz->numFilhos == 0){
@@ -76,15 +92,15 @@ void inserePalavra(char *str, No* raiz){
         raiz->filhos[0] = aux;
     }
     else{
-        for(i=0; i<raiz->numFilhos && str[0] < raiz->filhos[i]->texto[0]; i++){
-            if(findFirstDif(raiz->texto, str) == 0){
-                if(){
-                    No* aux = criaNoFinal(str);
-                    raiz->numFilhos++;
-                    raiz->filhos[raiz->numFilhos]
-                }
+        for(i=0; i<raiz->numFilhos && str[0] < raiz->filhos[i]->texto[0]; i++);
+        if(findFirstDif(raiz->texto, str) == 0){
+            if(){
+                No* aux = criaNoFinal(str);
+                raiz->numFilhos++;
+                raiz->filhos[raiz->numFilhos]
             }
         }
 
-    }
+
+    }*/
 }

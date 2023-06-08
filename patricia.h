@@ -30,4 +30,6 @@ void imprimeDicionario(No* raiz);
 
 void inserePalavra(char *str, No* no);
 
+No* getPos(No* raiz, int *pos);
+
 #endif //PATRICIATESTE_PATRICIA_H
