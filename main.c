@@ -28,6 +28,10 @@ int main() {
     f4->filhos[0] = f5;
     f4->filhos[1] = f6;
 
+    int pos = 0;
+    No* aux = buscaPos(raiz, "brazuca", &pos);
+    printf("%d | %s\n", pos, aux->texto);
+
 
     while(1){
         imprime_menu();
@@ -44,7 +48,7 @@ int main() {
                 //Consultar palavra
                 printf("Entre com a palavra prefixo: ");
                 scanf("%s%*c", text);
-                //consultaPalavra(text, raiz);
+                consultaPalavra(raiz, text);
                 break;
             case 3:
                 //Imprimir dicionario

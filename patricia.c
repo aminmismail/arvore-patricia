@@ -29,7 +29,7 @@ No* criaNoRaiz(){
     aux->isFinal = 0;
     aux->isPalavra = 0;
     aux->numFilhos = 0;
-    strcpy(aux->texto, " ");
+    strcpy(aux->texto, "");
 
     return aux;
 }
@@ -45,14 +45,57 @@ No* criaNoInterno(No* no, int ind){
 No *buscaPos(No* no, char text[], int *pos) {
     if (no == NULL) return NULL;
     int i = 0;
-    for(i=0; i < no->numFilhos && text[0] < no->filhos[i]->texto[0]; i++);
-    if ()
+    for (i = 0; i < no->numFilhos && text[0] > no->filhos[i]->texto[0]; i++);
+    if ((i + 1) > no->numFilhos || findFirstDif(text, no->filhos[i]->texto) == 0) {
+        *pos = i;
+        return no;
+    }
+
+    else if (isPrefixo(no->filhos[i]->texto, text)){
+        text += strlen(no->filhos[i]->texto);
         return buscaPos(no->filhos[i], text, pos);
-    *pos = i;
-    return no;
+    }
+
+    else{
+        text += findFirstDif(text, no->filhos[i]->texto);
+        return buscaPos(no->filhos[i], text, pos);
+        //*pos = i;
+        //return no;
+    }
 }
 
-void imprimeDicionarioAux(No* no, char *word) { //colocar prefixo ainda
+void consultaPalavraAux(No* no, char *word, char* prefix, int* count) {
+    int i;
+    if (no == NULL || *count >= 10){
+
+        return;
+    }
+
+    int len = strlen(word);
+    strcat(word, no->texto);
+
+    if (no->isPalavra) {
+        word[len + strlen(no->texto)] = '\0';
+        if(isPrefixo(prefix,word)){
+            printf("%s, ", word);
+            (*count)++;
+        }
+    }
+
+    for (i = 0; i < no->numFilhos; i++) {
+        consultaPalavraAux(no->filhos[i], word, prefix, count);
+    }
+
+    word[len] = '\0';
+}
+
+void consultaPalavra(No* raiz, char* prefix){
+    char word[100] = {};
+    int count = 0;
+    consultaPalavraAux(raiz, word, prefix, &count);
+}
+
+void imprimeDicionarioAux(No* no, char *word) {
     int i;
     if (no == NULL) return;
 
@@ -73,8 +116,9 @@ void imprimeDicionarioAux(No* no, char *word) { //colocar prefixo ainda
 
 
 void imprimeDicionario(No* raiz){
-    char word[100] = {};
+    char word[100] = {}, vet[1000][100] = {};
     imprimeDicionarioAux(raiz, word);
+    //imprimeVetDic()
 }
 
 No* getPos(No* raiz, int *pos){
