@@ -49,7 +49,8 @@ void carregaArquivo (int op, No* raiz){
         if (validateText(text)) {
             if (op == 0){
                 printf("Inserindo palavra: %s\n", text);
-                inserePalavra(text, raiz);
+                //inserePalavra(text, raiz);
+                inserir(raiz, text);
             }
             else {
                 printf("Removendo palavra: %s\n", text);

@@ -16,7 +16,7 @@ int isPrefixo(const char* str1, const char* str2) {
 No* criaNoFinal(char *text){
     int i;
     No* aux = (No*) malloc(sizeof(No));
-    for(i=0; i < 1000; i++) aux->filhos[i] = NULL;
+    for(i=0; i < numFilhosNo; i++) aux->filhos[i] = NULL;
     aux->isFinal = 1;
     aux->isPalavra = 1;
     aux->numFilhos = 0;
@@ -28,12 +28,11 @@ No* criaNoFinal(char *text){
 No* criaNoRaiz(){
     int i;
     No* aux = (No*) malloc(sizeof(No));
-    for(i=0; i < 1000; i++) aux->filhos[i] = NULL;
+    for(i=0; i < numFilhosNo; i++) aux->filhos[i] = NULL;
     aux->isFinal = 0;
     aux->isPalavra = 0;
     aux->numFilhos = 0;
     strcpy(aux->texto, "");
-
     return aux;
 }
 
@@ -49,7 +48,7 @@ No* criaNoRaiz(){
 
 No *buscaPos(No* no, char* text, int *pos) {
     if (no == NULL) return NULL;
-    int i = 0;
+    int i;
     for (i = 0; i < no->numFilhos && text[0] > no->filhos[i]->texto[0]; i++);
     if ((i + 1) > no->numFilhos || findFirstDif(text, no->filhos[i]->texto) == 0) {
         *pos = i;
@@ -104,7 +103,10 @@ void consultaPalavra(No* raiz, char* prefix){
 
 void imprimeDicionarioAux(No* no, char *word) {
     int i;
-    if (no == NULL) return;
+    if (no == NULL || (strcmp(no->texto, "") == 0 && no->numFilhos == 0)) {
+        printf("Nenhuma palavra na arvore!\n");
+        return;
+    }
 
     int len = strlen(word);
     strcat(word, no->texto);
@@ -133,19 +135,20 @@ void imprimeDicionario(No* raiz){
 void moveDireita(No* no, int pos){
     int i = no->numFilhos;
     for(; i >= pos; i--) no->filhos[i+1] = no->filhos[i];
-    no->numFilhos++;
+    //no->numFilhos++;
 }
 
 
 //
 void desceFilhos(No* noAtual, int pos, char* insertWord){
     int i=0, index = -1;
-    char* prefixo;
+    char *prefixo = NULL;
     index = findFirstDif(noAtual, insertWord);
     insertWord += index;
     strncpy(prefixo,noAtual->texto,index);
     No* novoNo = criaNoFinal(prefixo);
-    noAtual->texto += index;
+    strcpy(noAtual->texto, noAtual->texto[index]);
+    //noAtual->texto += index;
     //buscar pai
 }
 
@@ -177,4 +180,68 @@ void inserePalavra(char *str, No* raiz){
 
 
     }*/
+}
+
+No* createNode(char* texto) {
+    No* node = (No*)malloc(sizeof(No));
+    strcpy(node->texto, texto);
+    //node->texto = strdup(texto);
+    node->numFilhos = 0;
+    node->isFinal = 0;
+    node->isPalavra = 0;
+    for (int i = 0; i < 1000; i++) {
+        node->filhos[i] = NULL;
+    }
+    return node;
+}
+
+
+// Insert a key into the Radix Tree
+void inserir(No* no, char* str) {
+    No* noAtual = no;
+    int len = strlen(str), i;
+
+    for (i = 0; i < noAtual->numFilhos && str[0] >= noAtual->filhos[i]->texto[0]; i++) {
+        if (str[0] == noAtual->filhos[i]->texto[0]) {
+            int k = 0;
+            while (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0' && str[k] == noAtual->filhos[i]->texto[k]) {
+                k++;
+            }
+
+            if (str[k] == '\0' && noAtual->filhos[i]->texto[k] == '\0') {
+                noAtual->filhos[i]->isPalavra = 1;
+                return;
+            }
+
+            if (str[k] == '\0' && noAtual->filhos[i]->texto[k] != '\0') {
+                inserir(noAtual->filhos[i], str + k);
+                return;
+            }
+
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0') {
+                char* restante = (char*) malloc((len - k + 1));
+                strncpy(restante, str + k, len - k);
+                restante[len - k] = '\0';
+
+                char* restanteFilho = (char*) malloc((strlen(noAtual->filhos[i]->texto) - k + 1));
+                strncpy(restanteFilho, noAtual->filhos[i]->texto + k, strlen(noAtual->filhos[i]->texto) - k);
+                restanteFilho[strlen(noAtual->filhos[i]->texto) - k] = '\0';
+
+                strcpy(noAtual->filhos[i]->texto, restanteFilho);
+
+                No* novoNo = createNode(restante);
+                novoNo->isPalavra = 1;
+                novoNo->filhos[0] = noAtual->filhos[i];
+                noAtual->filhos[i] = novoNo;
+                noAtual->numFilhos++;
+
+                return;
+            }
+        }
+    }
+
+    moveDireita(noAtual, i);
+    noAtual->filhos[i] = createNode(str);
+    noAtual->filhos[i]->isPalavra = 1;
+    noAtual->numFilhos++;
 }

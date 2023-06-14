@@ -8,7 +8,7 @@ int main() {
     No* raiz = NULL;
     raiz = criaNoRaiz();
 
-    No* f1 = criaNoFinal("bras");
+    /*No* f1 = criaNoFinal("bras");
     f1->numFilhos = 2;
     f1->isFinal = 0;
     f1->isPalavra = 0;
@@ -33,7 +33,7 @@ int main() {
     No* aux = buscaPos(raiz, text1, &pos);
     printf("Palavra: %s\n", text1);
     printf("pos: %d | no: %s\n", pos, aux->texto);
-    printf("filho: %s\n", aux->filhos[pos]->texto);
+    printf("filho: %s\n", aux->filhos[pos]->texto);*/
 
 
     while(1){

@@ -5,10 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define numFilhosNo 10000
 
 typedef struct no{
-    char* texto;
-    struct no* filhos[1000];
+    char texto[150];
+    struct no* filhos[numFilhosNo];
     int numFilhos;
     int isFinal;
     int isPalavra;
@@ -35,6 +36,10 @@ void imprimeDicionario(No* raiz);
 void inserePalavra(char *str, No* no);
 
 No *buscaPos(No* no, char text[], int *pos);
+
+No* createNode(char* texto);
+
+void inserir(No* raiz, char* chave);
 
 //No* getPos(No* raiz, int *pos);
 
