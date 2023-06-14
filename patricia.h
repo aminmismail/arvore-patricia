@@ -7,7 +7,7 @@
 
 
 typedef struct no{
-    char texto[100];
+    char* texto;
     struct no* filhos[1000];
     int numFilhos;
     int isFinal;
@@ -22,7 +22,7 @@ No* criaNoFinal(char *text);
 
 No* criaNoRaiz();
 
-No* criaNoInterno(No* no, int ind);
+//No* criaNoInterno(No* no, int ind);
 
 void consultaPalavraAux(No* no, char *word, char* prefix, int* count);
 
@@ -36,6 +36,6 @@ void inserePalavra(char *str, No* no);
 
 No *buscaPos(No* no, char text[], int *pos);
 
-No* getPos(No* raiz, int *pos);
+//No* getPos(No* raiz, int *pos);
 
 #endif //PATRICIATESTE_PATRICIA_H

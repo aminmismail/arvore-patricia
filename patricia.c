@@ -7,9 +7,11 @@ int findFirstDif(const char *str1, const char *str2){
     return i;
 }
 
+
 int isPrefixo(const char* str1, const char* str2) {
     return (strncmp(str1, str2, strlen(str1)) == 0);
 }
+
 
 No* criaNoFinal(char *text){
     int i;
@@ -21,6 +23,7 @@ No* criaNoFinal(char *text){
     strcpy(aux->texto, text);
     return aux;
 }
+
 
 No* criaNoRaiz(){
     int i;
@@ -34,15 +37,17 @@ No* criaNoRaiz(){
     return aux;
 }
 
-No* criaNoInterno(No* no, int ind){
+
+/*No* criaNoInterno(No* no, int ind){
     No* aux1 = (No*) malloc(sizeof(No));
     No* aux2 = (No*) malloc(sizeof(No));
 
 
     return no;
-}
+}*/
 
-No *buscaPos(No* no, char text[], int *pos) {
+
+No *buscaPos(No* no, char* text, int *pos) {
     if (no == NULL) return NULL;
     int i = 0;
     for (i = 0; i < no->numFilhos && text[0] > no->filhos[i]->texto[0]; i++);
@@ -51,18 +56,18 @@ No *buscaPos(No* no, char text[], int *pos) {
         return no;
     }
 
-    else if (isPrefixo(no->filhos[i]->texto, text)){
+    /*else if (isPrefixo(no->filhos[i]->texto, text)){
         text += strlen(no->filhos[i]->texto);
         return buscaPos(no->filhos[i], text, pos);
-    }
+    }*/
 
     else{
         text += findFirstDif(text, no->filhos[i]->texto);
         return buscaPos(no->filhos[i], text, pos);
-        //*pos = i;
-        //return no;
     }
+
 }
+
 
 void consultaPalavraAux(No* no, char *word, char* prefix, int* count) {
     int i;
@@ -89,11 +94,13 @@ void consultaPalavraAux(No* no, char *word, char* prefix, int* count) {
     word[len] = '\0';
 }
 
+
 void consultaPalavra(No* raiz, char* prefix){
     char word[100] = {};
     int count = 0;
     consultaPalavraAux(raiz, word, prefix, &count);
 }
+
 
 void imprimeDicionarioAux(No* no, char *word) {
     int i;
@@ -121,13 +128,35 @@ void imprimeDicionario(No* raiz){
     //imprimeVetDic()
 }
 
-No* getPos(No* raiz, int *pos){
-    //if(raiz == NULL)
+
+//Move os filhos de um nó para a direita a partir de uma pos
+void moveDireita(No* no, int pos){
+    int i = no->numFilhos;
+    for(; i >= pos; i--) no->filhos[i+1] = no->filhos[i];
+    no->numFilhos++;
 }
 
 
+//
+void desceFilhos(No* noAtual, int pos, char* insertWord){
+    int i=0, index = -1;
+    char* prefixo;
+    index = findFirstDif(noAtual, insertWord);
+    insertWord += index;
+    strncpy(prefixo,noAtual->texto,index);
+    No* novoNo = criaNoFinal(prefixo);
+    noAtual->texto += index;
+    //buscar pai
+}
+
+
+/* No* getPos(No* raiz, int *pos){
+    //if(raiz == NULL);
+}*/
+
+
 void inserePalavra(char *str, No* raiz){
-    /*int i=0;
+    /*int i = 0;
     if(raiz == NULL) raiz = criaNoRaiz();
 
     if(raiz->numFilhos == 0){
@@ -135,8 +164,9 @@ void inserePalavra(char *str, No* raiz){
         raiz->numFilhos++;
         raiz->filhos[0] = aux;
     }
+
     else{
-        for(i=0; i<raiz->numFilhos && str[0] < raiz->filhos[i]->texto[0]; i++);
+        for(i=0; i < raiz->numFilhos && str[0] < raiz->filhos[i]->texto[0]; i++);
         if(findFirstDif(raiz->texto, str) == 0){
             if(){
                 No* aux = criaNoFinal(str);

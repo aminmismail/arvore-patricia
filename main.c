@@ -29,8 +29,11 @@ int main() {
     f4->filhos[1] = f6;
 
     int pos = 0;
-    No* aux = buscaPos(raiz, "brazuca", &pos);
-    printf("%d | %s\n", pos, aux->texto);
+    char text1[] = "brazuca";
+    No* aux = buscaPos(raiz, text1, &pos);
+    printf("Palavra: %s\n", text1);
+    printf("pos: %d | no: %s\n", pos, aux->texto);
+    printf("filho: %s\n", aux->filhos[pos]->texto);
 
 
     while(1){
