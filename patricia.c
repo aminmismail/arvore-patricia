@@ -103,10 +103,8 @@ void consultaPalavra(No* raiz, char* prefix){
 
 void imprimeDicionarioAux(No* no, char *word) {
     int i;
-    if (no == NULL || (strcmp(no->texto, "") == 0 && no->numFilhos == 0)) {
-        printf("Nenhuma palavra na arvore!\n");
-        return;
-    }
+    if (no == NULL) return;
+    if (strcmp(no->texto, "") == 0 && no->numFilhos == 0) printf("Nenhuma palavra na arvore!\n");
 
     int len = strlen(word);
     strcat(word, no->texto);
@@ -147,7 +145,7 @@ void desceFilhos(No* noAtual, int pos, char* insertWord){
     insertWord += index;
     strncpy(prefixo,noAtual->texto,index);
     No* novoNo = criaNoFinal(prefixo);
-    strcpy(noAtual->texto, noAtual->texto[index]);
+    strcpy(noAtual->texto, &noAtual->texto[index]);
     //noAtual->texto += index;
     //buscar pai
 }
@@ -185,11 +183,10 @@ void inserePalavra(char *str, No* raiz){
 No* createNode(char* texto) {
     No* node = (No*)malloc(sizeof(No));
     strcpy(node->texto, texto);
-    //node->texto = strdup(texto);
     node->numFilhos = 0;
     node->isFinal = 0;
     node->isPalavra = 0;
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < numFilhosNo; i++) {
         node->filhos[i] = NULL;
     }
     return node;
@@ -218,7 +215,7 @@ void inserir(No* no, char* str) {
                 return;
             }
 
-            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0') {
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] == '\0') {
                 char* restante = (char*) malloc((len - k + 1));
                 strncpy(restante, str + k, len - k);
                 restante[len - k] = '\0';

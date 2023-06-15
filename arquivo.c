@@ -45,6 +45,7 @@ int validateText(char *text){
 void carregaArquivo (int op, No* raiz){
     FILE *fr = loadPath();
     char text[100];
+    int total = 0;
     while (fscanf(fr, "%[^\n]%*c", text) != EOF) {
         if (validateText(text)) {
             if (op == 0){
