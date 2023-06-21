@@ -17,7 +17,7 @@ No* criaNoFinal(char *text){
     int i;
     No* aux = (No*) malloc(sizeof(No));
     for(i=0; i < numFilhosNo; i++) aux->filhos[i] = NULL;
-    aux->isFinal = 1;
+    //aux->isFinal = 1;
     aux->isPalavra = 1;
     aux->numFilhos = 0;
     strcpy(aux->texto, text);
@@ -29,7 +29,7 @@ No* criaNoRaiz(){
     int i;
     No* aux = (No*) malloc(sizeof(No));
     for(i=0; i < numFilhosNo; i++) aux->filhos[i] = NULL;
-    aux->isFinal = 0;
+    //aux->isFinal = 0;
     aux->isPalavra = 0;
     aux->numFilhos = 0;
     strcpy(aux->texto, "");
@@ -104,7 +104,12 @@ void consultaPalavra(No* raiz, char* prefix){
 void imprimeDicionarioAux(No* no, char *word) {
     int i;
     if (no == NULL) return;
-    if (strcmp(no->texto, "") == 0 && no->numFilhos == 0) printf("Nenhuma palavra na arvore!\n");
+    if (strcmp(no->texto, "") == 0 && no->numFilhos == 0) {
+        printf("Nenhuma palavra na arvore!\n");
+        //
+        return;
+        //
+    }
 
     int len = strlen(word);
     strcat(word, no->texto);
@@ -132,6 +137,7 @@ void imprimeDicionario(No* raiz){
 //Move os filhos de um nó para a direita a partir de uma pos
 void moveDireita(No* no, int pos){
     int i = no->numFilhos;
+    printf("i: %d\n", i);
     for(; i >= pos; i--) no->filhos[i+1] = no->filhos[i];
     //no->numFilhos++;
 }
@@ -184,7 +190,6 @@ No* createNode(char* texto) {
     No* node = (No*)malloc(sizeof(No));
     strcpy(node->texto, texto);
     node->numFilhos = 0;
-    node->isFinal = 0;
     node->isPalavra = 0;
     for (int i = 0; i < numFilhosNo; i++) {
         node->filhos[i] = NULL;
@@ -193,44 +198,69 @@ No* createNode(char* texto) {
 }
 
 
-// Insert a key into the Radix Tree
+// Insere uma palavra na arvore
 void inserir(No* no, char* str) {
     No* noAtual = no;
     int len = strlen(str), i;
 
-    for (i = 0; i < noAtual->numFilhos && str[0] >= noAtual->filhos[i]->texto[0]; i++) {
+    //Percorre os filhos do nó atual
+    for (i = 0; i < noAtual->numFilhos; i++) {
         if (str[0] == noAtual->filhos[i]->texto[0]) {
             int k = 0;
+
+            //Percorre o texto do nó filho
             while (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0' && str[k] == noAtual->filhos[i]->texto[k]) {
                 k++;
             }
 
+            //Se o texto do nó e do filho terminaram
             if (str[k] == '\0' && noAtual->filhos[i]->texto[k] == '\0') {
                 noAtual->filhos[i]->isPalavra = 1;
                 return;
             }
 
-            if (str[k] == '\0' && noAtual->filhos[i]->texto[k] != '\0') {
+            //Se o texto do no terminou mas o novo ainda nao
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] == '\0') {
                 inserir(noAtual->filhos[i], str + k);
                 return;
             }
 
-            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] == '\0') {
-                char* restante = (char*) malloc((len - k + 1));
-                strncpy(restante, str + k, len - k);
-                restante[len - k] = '\0';
+            //Se o texto do no e do filho ainda nao terminaram
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0') {
+                //cria palavra com resto da palavra a ser inserida
+                char restoNovo[50]={0};
+                strncpy(restoNovo, str + k, len - k);
+                restoNovo[len - k] = '\0';
 
-                char* restanteFilho = (char*) malloc((strlen(noAtual->filhos[i]->texto) - k + 1));
-                strncpy(restanteFilho, noAtual->filhos[i]->texto + k, strlen(noAtual->filhos[i]->texto) - k);
-                restanteFilho[strlen(noAtual->filhos[i]->texto) - k] = '\0';
+                //cria palavra apenas com o prefixo comum
+                char prefixo[50]={0};
+                strncpy(prefixo, noAtual->filhos[i]->texto, k);
+                prefixo[k + 1] = '\0';
 
-                strcpy(noAtual->filhos[i]->texto, restanteFilho);
+                //cria palavra do filho menos o prefixo
+                char novoFilho[50]={0};
+                strncpy(novoFilho, noAtual->filhos[i]->texto + k, strlen(noAtual->filhos[i]->texto) - k);
+                novoFilho[strlen(noAtual->filhos[i]->texto) - k] = '\0';
 
-                No* novoNo = createNode(restante);
-                novoNo->isPalavra = 1;
-                novoNo->filhos[0] = noAtual->filhos[i];
-                noAtual->filhos[i] = novoNo;
-                noAtual->numFilhos++;
+                //atualiza texto do no filho com texto novoFilho
+                strcpy(noAtual->filhos[i]->texto, novoFilho);
+
+                No* novoPrefixo = createNode(prefixo);
+                No* restNovo = createNode(restoNovo);
+
+                //Verifica qual dos filhos é maior
+                if(novoFilho[0] < restoNovo[0]){
+                    novoPrefixo->filhos[0] = noAtual->filhos[i];
+                    novoPrefixo->filhos[1] = restNovo;
+                }
+                else{
+                    novoPrefixo->filhos[0] = restNovo;
+                    novoPrefixo->filhos[1] = noAtual->filhos[i];
+                }
+
+                //Atualiza o filho do no atual pro prefixo
+                noAtual->filhos[i] = novoPrefixo;
+                novoPrefixo->numFilhos = 2;
 
                 return;
             }

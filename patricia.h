@@ -5,13 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define numFilhosNo 10000
+#define numFilhosNo 100
 
 typedef struct no{
-    char texto[150];
+    char texto[200];
     struct no* filhos[numFilhosNo];
     int numFilhos;
-    int isFinal;
     int isPalavra;
 }No;
 
@@ -22,8 +21,6 @@ int isPrefixo(const char* str1, const char* str2);
 No* criaNoFinal(char *text);
 
 No* criaNoRaiz();
-
-//No* criaNoInterno(No* no, int ind);
 
 void consultaPalavraAux(No* no, char *word, char* prefix, int* count);
 
