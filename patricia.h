@@ -22,13 +22,9 @@ void lowerWord(char word[]);
 
 No* criaNoRaiz();
 
-void consultaPalavraAux(No* no, char *word, char* prefix, int* count, char vet[][50]);
+void consultaPalavrasAux(No* no, char *word, char* prefix, int* count, char vet[][50], int op);
 
-void consultaPalavra(No* raiz, char* prefix);
-
-void imprimeDicionarioAux(No* no, char* word);
-
-void imprimeDicionario(No* raiz);
+void consultaPalavras(No* raiz, char* prefix, int op);
 
 No* criaNo(char* texto);
 

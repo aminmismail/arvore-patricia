@@ -8,34 +8,6 @@ int main() {
     No* raiz = NULL;
     raiz = criaNoRaiz();
 
-    /*No* f1 = criaNoFinal("bras");
-    f1->numFilhos = 2;
-    f1->isFinal = 0;
-    f1->isPalavra = 0;
-    No* f4 = criaNoFinal("falso");
-    f4->numFilhos = 2;
-    f4->isFinal = 0;
-    f4->isPalavra = 1;
-    No* f2 = criaNoFinal("il");
-    No* f3 = criaNoFinal("ao");
-    No* f5 = criaNoFinal("atim");
-    No* f6 = criaNoFinal("zetas");
-    raiz->numFilhos = 2;
-    raiz->filhos[0] = f1;
-    raiz->filhos[1] = f4;
-    f1->filhos[0] = f3;
-    f1->filhos[1] = f2;
-    f4->filhos[0] = f5;
-    f4->filhos[1] = f6;
-
-    int pos = 0;
-    char text1[] = "brazuca";
-    No* aux = buscaPos(raiz, text1, &pos);
-    printf("Palavra: %s\n", text1);
-    printf("pos: %d | no: %s\n", pos, aux->texto);
-    printf("filho: %s\n", aux->filhos[pos]->texto);*/
-
-
     while(1){
         imprime_menu();
         scanf("%d%*c", &opcao);
@@ -51,11 +23,11 @@ int main() {
                 //Consultar palavra
                 printf("Entre com a palavra prefixo: ");
                 scanf("%s%*c", text);
-                consultaPalavra(raiz, text);
+                consultaPalavras(raiz, text, 1);
                 break;
             case 3:
                 //Imprimir dicionario
-                imprimeDicionario(raiz);
+                consultaPalavras(raiz, "", 0);
                 break;
             case 4:
                 //Carregar arquivo de stopwords

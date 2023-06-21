@@ -7,11 +7,9 @@ int findFirstDif(const char *str1, const char *str2){
     return i;
 }
 
-
 int isPrefixo(const char* str1, const char* str2) {
     return (strncmp(str1, str2, strlen(str1)) == 0);
 }
-
 
 No* criaNoRaiz(){
     int i;
@@ -22,16 +20,6 @@ No* criaNoRaiz(){
     strcpy(aux->texto, "");
     return aux;
 }
-
-
-/*No* criaNoInterno(No* no, int ind){
-    No* aux1 = (No*) malloc(sizeof(No));
-    No* aux2 = (No*) malloc(sizeof(No));
-
-
-    return no;
-}*/
-
 
 /*No *buscaPos(No* no, char* text, int *pos) {
     if (no == NULL) return NULL;
@@ -90,6 +78,7 @@ void lowerWord(char word[]){
 
 void printVet(char vet[][50], int n){
     int i = 0;
+    printf("Total: %d\n",n);
     for(; i < n; i++){
         printf("%s", vet[i]);
         if(i < n-1) printf(", ");
@@ -97,9 +86,9 @@ void printVet(char vet[][50], int n){
     printf("\n");
 }
 
-void consultaPalavraAux(No* no, char *word, char* prefix, int* count, char vet[][50]){
+void consultaPalavrasAux(No* no, char *word, char* prefix, int* count, char vet[][50], int op){
     int i;
-    if (no == NULL || *count >= 10){
+    if (no == NULL || (op == 1 && *count >= 10)){
         return;
     }
     if (strcmp(no->texto, "") == 0 && no->numFilhos == 0) {
@@ -112,25 +101,25 @@ void consultaPalavraAux(No* no, char *word, char* prefix, int* count, char vet[]
 
     if (no->isPalavra) {
         word[len + strlen(no->texto)] = '\0';
-        if(isPrefixo(prefix,word)){
+        if((op == 1 && isPrefixo(prefix,word)) || op == 0){
             strcpy(vet[*count], word);
             (*count)++;
         }
     }
 
     for (i = 0; i < no->numFilhos; i++) {
-        consultaPalavraAux(no->filhos[i], word, prefix, count, vet);
+        consultaPalavrasAux(no->filhos[i], word, prefix, count, vet, op);
     }
 
     word[len] = '\0';
 }
 
 
-void consultaPalavra(No* raiz, char* prefix){
-    char word[100] = {}, vet[10][50] = {};
+void consultaPalavras(No* raiz, char* prefix, int op){
+    char word[100] = {}, vet[10000][50] = {};
     lowerWord(prefix);
     int count = 0;
-    consultaPalavraAux(raiz, word, prefix, &count, vet);
+    consultaPalavrasAux(raiz, word, prefix, &count, vet, op);
     printVet(vet, count);
 }
 
@@ -158,12 +147,6 @@ void imprimeDicionarioAux(No* no, char *word) {
 }
 
 
-void imprimeDicionario(No* raiz){
-    char word[100] = {}, vet[1000][100] = {};
-    imprimeDicionarioAux(raiz, word);
-
-}
-
 //Move os filhos de um nó para a direita a partir de uma pos
 void moveDireita(No* no, int pos){
     int i = no->numFilhos;
@@ -188,7 +171,7 @@ void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[
     No* novoPrefixo = criaNo(prefixo);
     No* restNovo = criaNo(restoNovo);
     restNovo->isPalavra = 1;
-    noAtual->filhos[i]->isPalavra = 1;
+    //noAtual->filhos[i]->isPalavra = 1;
 
     //Verifica qual dos filhos é maior
     if(novoFilho[0] < restoNovo[0]){
@@ -242,13 +225,16 @@ void inserir(No* no, char* str) {
                     //cria palavra com resto da palavra a ser inserida
                     char restoNovo[50] = {0};
                     strncpy(restoNovo, str + k, len - k); restoNovo[len - k] = '\0';
+
                     //cria palavra apenas com o prefixo comum
                     char prefixo[50] = {0};
                     strncpy(prefixo, noAtual->filhos[i]->texto, k); prefixo[k + 1] = '\0';
+
                     //cria palavra do filho menos o prefixo
                     char novoFilho[50] = {0};
                     strncpy(novoFilho, noAtual->filhos[i]->texto + k, strlen(noAtual->filhos[i]->texto) - k);
                     novoFilho[strlen(noAtual->filhos[i]->texto) - k] = '\0';
+
                     split(noAtual, i, restoNovo, prefixo, novoFilho);
                     return;
                 }
