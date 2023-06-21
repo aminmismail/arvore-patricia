@@ -35,7 +35,18 @@ int main() {
                 break;
             case 5:
                 //Imprimir subarvore por niveis
-                //imprimeNivel(raiz);
+                imprime_por_niveis(raiz);
+                break;
+            case 6:
+                //Verifica se uma palavra existe
+                printf("Entre com a palavra: ");
+                scanf("%s%*c", text);
+                No* no = buscaNo(raiz, text);
+                if(no == NULL) printf("Palavra não existe!\n");
+                else{
+                    printf("Palavra encontrada!\n");
+                    printf("Texto no: %s\n", no->texto);
+                }
                 break;
             default:
                 printf("Entrada invalida\n");

@@ -70,6 +70,35 @@ int buscar(No* no, char* str) {
     return 0;
 }
 
+
+No* buscaNo(No* no, char* str) {
+    No* noAtual = no;
+    int len = strlen(str), i;
+    //Percorre os filhos do nó atual
+    for (i = 0; i < noAtual->numFilhos ; i++) {
+        if (str[0] == noAtual->filhos[i]->texto[0]) {
+            int k = 0;
+            //Percorre o texto do nó filho
+            while (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0' && str[k] == noAtual->filhos[i]->texto[k]) {
+                k++;
+            }
+            //Se o texto do nó e do filho terminaram
+            if (str[k] == '\0' && noAtual->filhos[i]->texto[k] == '\0') {
+                return noAtual->filhos[i];
+            }
+            //Se o texto do no terminou mas o novo ainda nao
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] == '\0') {
+                return buscaNo(noAtual->filhos[i], str + k);
+            }
+            //Se o texto do no e do filho ainda nao terminaram (split)
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0') {
+                return NULL;
+            }
+        }
+    }
+    return NULL;
+}
+
 void lowerWord(char word[]){
     int i, len = strlen(word);
     for(i=0; i < len; i++) word[i] = tolower(word[i]);
@@ -188,7 +217,6 @@ void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[
     novoPrefixo->numFilhos = 2;
 }
 
-
 // Insere uma palavra na arvore
 void inserir(No* no, char* str) {
     No* noAtual = no;
@@ -246,4 +274,104 @@ void inserir(No* no, char* str) {
     noAtual->filhos[i] = criaNo(str);
     noAtual->filhos[i]->isPalavra = 1;
     noAtual->numFilhos++;
+}
+
+
+// Imprime a árvore por níveis
+// Pré-condição: Arquivo de índices aberto e contendo pelo menos o cabeçalho gravado
+// Pós-condição: Impressão da árvore por níveis
+void imprime_por_niveis(No* raiz){
+    if(raiz == NULL){
+        printf("Arvore vazia\n");
+        return;
+    }
+    int nivel = 0;
+    FILA* fila = cria_fila();
+
+    enqueue(fila, raiz);
+    enqueue(fila, NULL);
+    printf("Nivel 0: ");
+    while (!fila_vazia(fila)) {
+        No* no = dequeue(fila);
+
+        if (no == NULL) {
+            printf("\n");
+            if (!fila_vazia(fila)) {
+                ++nivel;
+                printf("Nivel %d: ", nivel);
+                enqueue(fila, NULL);
+            }
+            continue;
+        }
+        if(no == raiz){
+            printf("(-:%d)", no->numFilhos);
+        }
+        else printf("(%s:%d) ", no->texto, no->numFilhos);
+        if (no->numFilhos != 0) {
+            int n = no->numFilhos;
+            for (int i = 0; i < n; i++) {
+                enqueue(fila, no->filhos[i]);
+            }
+        }
+    }
+    free(fila);
+}
+
+
+// cria uma fila
+// Pré-condição: nenhuma
+// Pós-condição: fila criada
+FILA* cria_fila(){
+    FILA *f = (FILA*)malloc(sizeof(FILA));
+    f->inicio = NULL;
+    f->fim = NULL;
+    return f;
+}
+
+//pré-requisitos: Recebe um ponteiro não nulo para fila
+//pós-requisitos: Retorna 1 se a fila for vazio e 0 se não
+int fila_vazia(FILA *f){
+    return f->inicio == NULL;
+}
+
+//pré-requisitos: Um ponteiro não nulo para fila
+//pós-requisitos: a quantidade de elementos na fila é retornado
+int fila_tam(FILA *f){
+    NO_FILA* aux = f->inicio;
+    int i = 0;
+    while(aux){
+        i++;
+        aux = aux->prox;
+    }
+    return i;
+}
+
+
+// enfileira uma chave na fila
+// Pré-condição: fila existente e chave a ser inserida
+// Pós-condição: fila atualizada com chave
+void enqueue(FILA *f, No* no){
+    NO_FILA* aux = (NO_FILA*)malloc(sizeof(NO_FILA));
+    aux->no = no;
+    aux->prox = NULL;
+    if(fila_vazia(f)){
+        f->inicio = aux;
+    }else{
+        f->fim->prox = aux;
+    }
+    f->fim = aux;
+}
+
+// desenfileira uma chave na fila
+// Pré-condição: fila existente e chave a ser removida
+// Pós-condição: fila atualizada sem a chave
+No* dequeue(FILA* f){
+    NO_FILA* aux = f->inicio;
+    No* no = f->inicio->no;
+    if(f->inicio == f->fim){
+        f->fim = NULL;
+    }
+    f->inicio = f->inicio->prox;
+    free(aux);
+    return no;
 }
