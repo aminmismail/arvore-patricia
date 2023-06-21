@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define numFilhosNo 100
+#define numFilhosNo 50
 
 typedef struct no{
     char texto[200];
@@ -18,11 +18,11 @@ int findFirstDif(const char *str1, const char *str2);
 
 int isPrefixo(const char* str1, const char* str2);
 
-No* criaNoFinal(char *text);
+void lowerWord(char word[]);
 
 No* criaNoRaiz();
 
-void consultaPalavraAux(No* no, char *word, char* prefix, int* count);
+void consultaPalavraAux(No* no, char *word, char* prefix, int* count, char vet[][50]);
 
 void consultaPalavra(No* raiz, char* prefix);
 
@@ -30,14 +30,12 @@ void imprimeDicionarioAux(No* no, char* word);
 
 void imprimeDicionario(No* raiz);
 
-void inserePalavra(char *str, No* no);
+No* criaNo(char* texto);
 
-No *buscaPos(No* no, char text[], int *pos);
+int buscar(No* no, char* str);
 
-No* createNode(char* texto);
+void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[]);
 
 void inserir(No* raiz, char* chave);
-
-//No* getPos(No* raiz, int *pos);
 
 #endif //PATRICIATESTE_PATRICIA_H
