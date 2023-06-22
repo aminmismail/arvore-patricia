@@ -1,16 +1,16 @@
 #include "patricia.h"
 #include "arquivo.h"
 
-int findFirstDif(const char *str1, const char *str2){
-    int i;
-    for(i=0; str1[i] == str2[i]; i++);
-    return i;
-}
-
+// Verifica se str1 é um prefixo de str2
+// Pré-condição: nenhuma
+// Pós-condição: retorna 1 se str1 é um prefixo de str2, 0 caso contrário
 int isPrefixo(const char* str1, const char* str2) {
     return (strncmp(str1, str2, strlen(str1)) == 0);
 }
 
+// Cria um nó raiz da árvore Patricia
+// Pré-condição: nenhuma
+// Pós-condição: retorna um ponteiro para o nó raiz criado
 No* criaNoRaiz(){
     int i;
     No* aux = (No*) malloc(sizeof(No));
@@ -21,34 +21,9 @@ No* criaNoRaiz(){
     return aux;
 }
 
-No* buscaPrefixo(No* no, char* str) {
-    No* noAtual = no;
-    int i;
-    //Percorre os filhos do nó atual
-    for (i = 0; i < noAtual->numFilhos ; i++) {
-        if (str[0] == noAtual->filhos[i]->texto[0]){
-            int k = 0;
-            //Percorre o texto do nó filho
-            while (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0' && str[k] == noAtual->filhos[i]->texto[k]) {
-                k++;
-            }
-            //Se o texto do nó e do filho terminaram
-            if (str[k] == '\0'){
-                return noAtual->filhos[i];
-            }
-            //Se o texto do no terminou mas o novo ainda nao
-            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] == '\0'){
-                return buscaPrefixo(noAtual->filhos[i], str + k);
-            }
-            //Se o texto do no e do filho ainda nao terminaram (split)
-            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0'){
-                return NULL;
-            }
-        }
-    }
-    return NULL;
-}
-
+// Converte a palavra word para letras minúsculas
+// Pré-condição: nenhuma
+// Pós-condição: a palavra word é convertida para letras minúsculas
 void lowerWord(char word[]){
     int i, len = strlen(word);
     for(i=0; i < len; i++) word[i] = tolower(word[i]);
@@ -64,6 +39,7 @@ void printVet(char vet[][50], int n){
     }
     printf("\n");
 }
+
 
 void consultaPalavrasAux(No* no, char *word, char* prefix, int* count, char vet[][50], int op){
     int i;
@@ -93,6 +69,7 @@ void consultaPalavrasAux(No* no, char *word, char* prefix, int* count, char vet[
     word[len] = '\0';
 }
 
+
 void consultaPalavras(No* raiz, char* prefix, int op){
     char word[100] = {}, vet[10000][50] = {};
     lowerWord(prefix);
@@ -101,43 +78,19 @@ void consultaPalavras(No* raiz, char* prefix, int op){
     printVet(vet, count);
 }
 
-void imprimeDicionarioAux(No* no, char *word) {
-    int i;
-    if (no == NULL) return;
-    if (strcmp(no->texto, "") == 0 && no->numFilhos == 0) {
-        printf("Nenhuma palavra na arvore!\n");
-        return;
-    }
-
-    int len = strlen(word);
-    strcat(word, no->texto);
-
-    if (no->isPalavra) {
-        word[len + strlen(no->texto)] = '\0';
-        printf("%s\n", word);
-    }
-
-    for (i = 0; i < no->numFilhos; i++) {
-        imprimeDicionarioAux(no->filhos[i], word);
-    }
-
-    word[len] = '\0';
-}
-
 
 //Move os filhos de um nó para a direita a partir de uma pos
 void moveDireita(No* no, int pos){
     int i = no->numFilhos;
-    //printf("i: %d\n", i);
     for(; i >= pos; i--) no->filhos[i+1] = no->filhos[i];
 }
 
 //Move os filhos de um nó para a esquerda a partir de uma pos
 void moveEsquerda(No* no, int pos){
     int i = pos;
-    //printf("i: %d\n", i);
     for(; i > no->numFilhos; i++) no->filhos[i] = no->filhos[i+1];
 }
+
 
 No* criaNo(char* texto) {
     No* no = (No*)malloc(sizeof(No));
@@ -150,14 +103,13 @@ No* criaNo(char* texto) {
     return no;
 }
 
+
 void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[]){
     //atualiza texto do no filho com texto novoFilho
     strcpy(noAtual->filhos[i]->texto, novoFilho);
     No* novoPrefixo = criaNo(prefixo);
     No* restNovo = criaNo(restoNovo);
     restNovo->isPalavra = 1;
-    //noAtual->filhos[i]->isPalavra = 1;
-
     //Verifica qual dos filhos é maior
     if(novoFilho[0] < restoNovo[0]){
         novoPrefixo->filhos[0] = noAtual->filhos[i];
@@ -173,38 +125,35 @@ void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[
     novoPrefixo->numFilhos = 2;
 }
 
-// Function to remove a word from the Radix Tree
-void remover(No* no, char* palavra) {
-    int i, j;
-    int len = strlen(palavra);
 
-    // Find the node containing the prefix of the word
+void removeNo(No* no, int i){
+    no->numFilhos--;
+    for(; i < no->numFilhos; i++) no->filhos[i] = no->filhos[i+1];
+    no->filhos[i] = NULL;
+    free(no->filhos[i]);
+}
+
+
+// Remove uma palavra da arvore
+void remover(No* no, char* palavra) {
+    int i;
     for (i = 0; i < no->numFilhos; i++) {
         if (palavra[0] == no->filhos[i]->texto[0]) {
-            // Check if the prefix matches the entire word
             if (strcmp(palavra, no->filhos[i]->texto) == 0) {
-                // If the word is a separate node, remove it
-                if (no->filhos[i]->isPalavra) {
-                    free(no->filhos[i]);
-                    no->filhos[i] = NULL;
-                    no->numFilhos--;
-                    // Shift the remaining nodes to fill the gap
-                    moveEsquerda(no, i);
+                if (no->filhos[i]->numFilhos != 0){
+                    no->filhos[i]->isPalavra = 0;
+                }
+                else if (no->filhos[i]->isPalavra){
+                    removeNo(no, i);
                     return;
                 }
             }
             else {
                 int k;
                 for(k=0; palavra[k] == no->filhos[i]->texto[k]; k++);
-                // Remove the word from the child node recursively
                 remover(no->filhos[i], palavra + k);
-                // Check if the child node is empty after removing the word
                 if (no->filhos[i]->numFilhos == 0 && no->filhos[i]->isPalavra == 0) {
-                    free(no->filhos[i]);
-                    no->filhos[i] = NULL;
-                    no->numFilhos--;
-                    // Shift the remaining nodes to fill the gap
-                    moveEsquerda(no, i);
+                    removeNo(no, i);
                     return;
                 }
             }
@@ -272,21 +221,60 @@ void inserir(No* no, char* str) {
     noAtual->numFilhos++;
 }
 
+// Busca um prefixo na árvore
+// Pré-condição: no aponta para um nó válido, str é o prefixo a ser buscado
+// Pós-condição: retorna um ponteiro para o nó que representa o prefixo buscado, ou NULL caso não seja encontrado
+No* buscaPrefixo(No* no, char* str, int* nivel){
+    No* noAtual = no;
+    int i;
+    if(noAtual->numFilhos == 0) return NULL;
+    if(strcmp(no->texto, "") == 0){
+        printf("Nivel 0: (-:%d)\n", no->numFilhos);
+        *nivel += 1;
+    }
+    //Percorre os filhos do nó atual
+    for (i = 0; i < noAtual->numFilhos ; i++) {
+        if (str[0] == noAtual->filhos[i]->texto[0]){
+            int k = 0;
+            //Percorre o texto do nó filho
+            while (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0' && str[k] == noAtual->filhos[i]->texto[k]) {
+                k++;
+            }
+            //Se o texto do nó e do filho terminaram
+            if (str[k] == '\0'){
+                return noAtual->filhos[i];
+            }
+            //Se o texto do no terminou mas o novo ainda nao
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] == '\0'){
+                printf("Nivel %d: ", *nivel);
+                printf("(%s:%d)\n", no->filhos[i]->texto, no->numFilhos);
+                *nivel += 1;
+                return buscaPrefixo(noAtual->filhos[i], str + k, nivel);
+            }
+            //Se o texto do no e do filho ainda nao terminaram
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0'){
+                return NULL;
+            }
+        }
+    }
+    return NULL;
+}
+
 
 // Imprime a árvore por níveis
 // Pré-condição: Arquivo de índices aberto e contendo pelo menos o cabeçalho gravado
 // Pós-condição: Impressão da árvore por níveis
-void imprime_por_niveis(No* raiz, char* str){
+void imprime_por_niveis(No* raiz, char* str, int c){
     if(raiz == NULL){
         printf("Arvore vazia\n");
         return;
     }
-    int nivel = 0;
+    int nivel = c;
     FILA* fila = cria_fila();
 
     enqueue(fila, raiz);
     enqueue(fila, NULL);
-    printf("Nivel 0: ");
+    printf("Nivel %d: ", nivel);
     while (!fila_vazia(fila)) {
         No* no = dequeue(fila);
 
@@ -300,10 +288,10 @@ void imprime_por_niveis(No* raiz, char* str){
             continue;
         }
         int len = strlen(str);
-        if(no == raiz && (strcmp(str + (len - strlen(no->texto)), no->texto) == 0)){
+        /*if(no == raiz && (strcmp(str + (len - strlen(no->texto)), no->texto) == 0)){
             printf("(-:%d)", no->numFilhos);
-        }
-        else printf("(%s:%d) ", no->texto, no->numFilhos);
+        }*/
+        printf("(%s:%d) ", no->texto, no->numFilhos);
         if (no->numFilhos != 0) {
             int n = no->numFilhos;
             for (int i = 0; i < n; i++) {
@@ -313,7 +301,6 @@ void imprime_por_niveis(No* raiz, char* str){
     }
     free(fila);
 }
-
 
 // cria uma fila
 // Pré-condição: nenhuma
@@ -330,19 +317,6 @@ FILA* cria_fila(){
 int fila_vazia(FILA *f){
     return f->inicio == NULL;
 }
-
-//pré-requisitos: Um ponteiro não nulo para fila
-//pós-requisitos: a quantidade de elementos na fila é retornado
-int fila_tam(FILA *f){
-    NO_FILA* aux = f->inicio;
-    int i = 0;
-    while(aux){
-        i++;
-        aux = aux->prox;
-    }
-    return i;
-}
-
 
 // enfileira uma chave na fila
 // Pré-condição: fila existente e chave a ser inserida
