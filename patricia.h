@@ -49,15 +49,25 @@ void consultaPalavrasAux(No* no, char *word, char* prefix, int* count, char vet[
 // Pós-condição: imprime as palavras que começam com o prefixo prefix na árvore com raiz raiz
 void consultaPalavras(No* raiz, char* prefix, int op);
 
+// Imprime o vetor passado como parametro
+// Pré-condição: vetor valido e numero de palavras
+// Pós-condição: vetor impresso na tela do usuario
+void printVet(char vet[][50], int n);
+
 // Cria um novo nó com o texto especificado
 // Pré-condição: texto é uma string válida
 // Pós-condição: retorna um ponteiro para o novo nó criado
 No* criaNo(char* texto);
 
-// Move o filho de um nó para a posição especificada
-// Pré-condição: no é um nó válido, pos é a posição do filho a ser movido
-// Pós-condição: move o filho de no para a posição pos
-void moveEsquerda(No* no, int pos);
+// Remove o no de posicao i de um no pai
+// Pré-condição: no é valido nao nulo e i é a posicao do no a ser removido
+// Pós-condição: no removido no outro no (pai)
+void removeNo(No* no, int i);
+
+// Move os nos de um no para a direita
+// Pré-condição: no é valido nao nulo e i é a posicao inicial dos nos a serem movidos
+// Pós-condição: nos movidos para a direita
+void moveDireita(No* no, int pos);
 
 // Move os filhos de um no para o outro
 // Pré-condição: nos validos nao nulos

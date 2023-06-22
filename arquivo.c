@@ -1,9 +1,9 @@
 #include "arquivo.h"
 #include "patricia.h"
 
-// Realiza a impressão do menu na tela
+// Imprime o menu de opções
 // Pré-condição: nenhuma
-// Pós-condição: menu impresso na tela
+// Pós-condição: nenhuma
 void imprime_menu(){
     printf("\n\tMenu de Opcoes:\n\n");
     printf("1.  Carregar arquivo de texto\n");
@@ -19,6 +19,9 @@ void imprime_menu(){
     printf("Digite a opcao desejada: ");
 }
 
+// Valida o texto fornecido
+// Pré-condição: text é um ponteiro não nulo para uma string válida
+// Pós-condição: retorna 1 se o texto for válido, 0 caso contrário
 FILE* loadPath(){
     FILE *fr;
     char path[50];
@@ -31,6 +34,9 @@ FILE* loadPath(){
     return fr;
 }
 
+// Carrega o caminho do arquivo
+// Pré-condição: nenhuma
+// Pós-condição: retorna um ponteiro para o arquivo carregado
 int validateText(char *text){
     char *aux;
     for(aux = text; *aux != '\0'; aux++){
@@ -53,13 +59,11 @@ void carregaArquivo (int op, No* raiz){
         if (validateText(text)) {
             if (op == 0){
                 printf("Inserindo palavra: %s\n", text);
-                //inserePalavra(text, raiz);
                 inserir(raiz, text);
             }
             else {
                 printf("Removendo palavra: %s\n", text);
                 remover(raiz, text);
-                //remove a palavra
             }
         }
         else printf("Palavra ignorada: %s\n",text);

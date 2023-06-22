@@ -29,7 +29,9 @@ void lowerWord(char word[]){
     for(i=0; i < len; i++) word[i] = tolower(word[i]);
 }
 
-
+// Imprime o vetor passado como parametro
+// Pré-condição: vetor valido e numero de palavras
+// Pós-condição: vetor impresso na tela do usuario
 void printVet(char vet[][50], int n){
     int i = 0;
     printf("Total: %d\n",n);
@@ -40,7 +42,9 @@ void printVet(char vet[][50], int n){
     printf("\n");
 }
 
-
+// Consulta as palavras que começam com o prefixo prefix
+// Pré-condição: no aponta para um nó válido da árvore, word é uma palavra auxiliar, count é um contador, vet é um vetor de palavras, op é um valor auxiliar
+// Pós-condição: preenche o vetor vet com as palavras que começam com o prefixo prefix e atualiza o valor de count
 void consultaPalavrasAux(No* no, char *word, char* prefix, int* count, char vet[][50], int op){
     int i;
     if (no == NULL || (op == 1 && *count >= 10)){
@@ -69,7 +73,9 @@ void consultaPalavrasAux(No* no, char *word, char* prefix, int* count, char vet[
     word[len] = '\0';
 }
 
-
+// Consulta as palavras que começam com o prefixo prefix na árvore com raiz raiz
+// Pré-condição: raiz aponta para um nó válido da árvore, prefix é um prefixo, op é um valor auxiliar
+// Pós-condição: imprime as palavras que começam com o prefixo prefix na árvore com raiz raiz
 void consultaPalavras(No* raiz, char* prefix, int op){
     char word[100] = {}, vet[10000][50] = {};
     lowerWord(prefix);
@@ -78,20 +84,17 @@ void consultaPalavras(No* raiz, char* prefix, int op){
     printVet(vet, count);
 }
 
-
-//Move os filhos de um nó para a direita a partir de uma pos
+// Move os nos de um no para a direita
+// Pré-condição: no é valido nao nulo e i é a posicao inicial dos nos a serem movidos
+// Pós-condição: nos movidos para a direita
 void moveDireita(No* no, int pos){
     int i = no->numFilhos;
     for(; i >= pos; i--) no->filhos[i+1] = no->filhos[i];
 }
 
-//Move os filhos de um nó para a esquerda a partir de uma pos
-void moveEsquerda(No* no, int pos){
-    int i = pos;
-    for(; i > no->numFilhos; i++) no->filhos[i] = no->filhos[i+1];
-}
-
-
+// Cria um novo nó com o texto especificado
+// Pré-condição: texto é uma string válida
+// Pós-condição: retorna um ponteiro para o novo nó criado
 No* criaNo(char* texto) {
     No* no = (No*)malloc(sizeof(No));
     strcpy(no->texto, texto);
@@ -103,7 +106,10 @@ No* criaNo(char* texto) {
     return no;
 }
 
-
+// Divide o nó atual em dois nós diferentes
+// Pré-condição: noAtual é um nó válido, i é a posição onde a divisão deve ocorrer, restoNovo é a parte restante a ser inserida no novo nó,
+// prefixo é o prefixo em comum, novoFilho é o texto do novo filho
+// Pós-condição: divide o nó atual em dois nós diferentes
 void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[]){
     //atualiza texto do no filho com texto novoFilho
     strcpy(noAtual->filhos[i]->texto, novoFilho);
@@ -125,6 +131,9 @@ void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[
     novoPrefixo->numFilhos = 2;
 }
 
+// Move os filhos de um no para o outro
+// Pré-condição: nos validos nao nulos
+// Pós-condição: move o filho de no para a posição dos filhos do pai
 void copiaFilhos(No* pai, No* filho){
     int i;
     for(i = filho->numFilhos; i >= 0; i--){
@@ -136,6 +145,9 @@ void copiaFilhos(No* pai, No* filho){
     free(filho);
 }
 
+// Remove o no de posicao i de um no pai
+// Pré-condição: no é valido nao nulo e i é a posicao do no a ser removido
+// Pós-condição: no removido no outro no (pai)
 void removeNo(No* no, int i){
     no->numFilhos--;
     for(; i < no->numFilhos; i++) no->filhos[i] = no->filhos[i+1];
@@ -148,8 +160,9 @@ void removeNo(No* no, int i){
     }
 }
 
-
-// Remove uma palavra da arvore
+// Remove a palavra especificada da árvore
+// Pré-condição: no aponta para um nó válido, palavra é a palavra a ser removida
+// Pós-condição: remove a palavra da árvore com raiz no
 void remover(No* no, char* palavra) {
     int i;
     for (i = 0; i < no->numFilhos; i++) {
@@ -176,8 +189,9 @@ void remover(No* no, char* palavra) {
     }
 }
 
-
-// Insere uma palavra na arvore
+// Insere uma chave na árvore
+// Pré-condição: raiz é um nó válido, chave é a chave a ser inserida
+// Pós-condição: insere a chave na árvore com raiz raiz
 void inserir(No* no, char* str) {
     No* noAtual = no;
     int len = strlen(str), i;
@@ -274,7 +288,6 @@ No* buscaPrefixo(No* no, char* str, int* nivel){
     }
     return NULL;
 }
-
 
 // Imprime a árvore por níveis
 // Pré-condição: Arquivo de índices aberto e contendo pelo menos o cabeçalho gravado
