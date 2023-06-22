@@ -21,10 +21,6 @@ No* criaNoRaiz(){
     return aux;
 }
 
-
-
-
-
 No* buscaPrefixo(No* no, char* str) {
     No* noAtual = no;
     int i;
@@ -97,7 +93,6 @@ void consultaPalavrasAux(No* no, char *word, char* prefix, int* count, char vet[
     word[len] = '\0';
 }
 
-
 void consultaPalavras(No* raiz, char* prefix, int op){
     char word[100] = {}, vet[10000][50] = {};
     lowerWord(prefix);
@@ -137,6 +132,13 @@ void moveDireita(No* no, int pos){
     for(; i >= pos; i--) no->filhos[i+1] = no->filhos[i];
 }
 
+//Move os filhos de um nó para a esquerda a partir de uma pos
+void moveEsquerda(No* no, int pos){
+    int i = pos;
+    //printf("i: %d\n", i);
+    for(; i > no->numFilhos; i++) no->filhos[i] = no->filhos[i+1];
+}
+
 No* criaNo(char* texto) {
     No* no = (No*)malloc(sizeof(No));
     strcpy(no->texto, texto);
@@ -170,6 +172,46 @@ void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[
     noAtual->filhos[i] = novoPrefixo;
     novoPrefixo->numFilhos = 2;
 }
+
+// Function to remove a word from the Radix Tree
+void remover(No* no, char* palavra) {
+    int i, j;
+    int len = strlen(palavra);
+
+    // Find the node containing the prefix of the word
+    for (i = 0; i < no->numFilhos; i++) {
+        if (palavra[0] == no->filhos[i]->texto[0]) {
+            // Check if the prefix matches the entire word
+            if (strcmp(palavra, no->filhos[i]->texto) == 0) {
+                // If the word is a separate node, remove it
+                if (no->filhos[i]->isPalavra) {
+                    free(no->filhos[i]);
+                    no->filhos[i] = NULL;
+                    no->numFilhos--;
+                    // Shift the remaining nodes to fill the gap
+                    moveEsquerda(no, i);
+                    return;
+                }
+            }
+            else {
+                int k;
+                for(k=0; palavra[k] == no->filhos[i]->texto[k]; k++);
+                // Remove the word from the child node recursively
+                remover(no->filhos[i], palavra + k);
+                // Check if the child node is empty after removing the word
+                if (no->filhos[i]->numFilhos == 0 && no->filhos[i]->isPalavra == 0) {
+                    free(no->filhos[i]);
+                    no->filhos[i] = NULL;
+                    no->numFilhos--;
+                    // Shift the remaining nodes to fill the gap
+                    moveEsquerda(no, i);
+                    return;
+                }
+            }
+        }
+    }
+}
+
 
 // Insere uma palavra na arvore
 void inserir(No* no, char* str) {

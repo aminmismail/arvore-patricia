@@ -42,9 +42,18 @@ int main() {
                 else imprime_por_niveis(no, text);
                 break;
             case 6:
-                //Verifica se uma palavra existe
+                //Imprime toda a arvore por nivel
                 imprime_por_niveis(raiz, "");
                 break;
+            case 7:
+                printf("Entre com a palavra a ser inserida: ");
+                scanf("%s%*c", text);
+                inserir(raiz, text);
+                break;
+            case 8:
+                printf("Entre com a palavra a ser removida: ");
+                scanf("%s%*c", text);
+                remover(raiz, text);
             default:
                 printf("Entrada invalida\n");
                 break;

@@ -38,7 +38,9 @@ void consultaPalavras(No* raiz, char* prefix, int op);
 
 No* criaNo(char* texto);
 
-int buscar(No* no, char* str);
+void moveEsquerda(No* no, int pos);
+
+void remover(No* no, char* palavra);
 
 void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[]);
 

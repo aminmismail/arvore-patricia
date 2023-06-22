@@ -12,6 +12,8 @@ void imprime_menu(){
     printf("4.  Carregar arquivo de stopwords\n");
     printf("5.  Imprimir subarvore por niveis\n");
     printf("6.  Imprimir arvore completa por niveis\n");
+    printf("7.  Inserir palavra manualmente\n");
+    printf("8.  Remover palavra manualmente\n");
     printf("0.  Sair\n\n");
 
     printf("Digite a opcao desejada: ");
@@ -56,6 +58,7 @@ void carregaArquivo (int op, No* raiz){
             }
             else {
                 printf("Removendo palavra: %s\n", text);
+                remover(raiz, text);
                 //remove a palavra
             }
         }
