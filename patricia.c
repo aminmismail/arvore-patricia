@@ -125,12 +125,27 @@ void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[
     novoPrefixo->numFilhos = 2;
 }
 
+void copiaFilhos(No* pai, No* filho){
+    int i;
+    for(i = filho->numFilhos; i >= 0; i--){
+        pai->filhos[i] = filho->filhos[i];
+    }
+    pai->numFilhos = filho->numFilhos;
+    if(filho->isPalavra == 1) pai->isPalavra = 1;
+    filho = NULL;
+    free(filho);
+}
 
 void removeNo(No* no, int i){
     no->numFilhos--;
     for(; i < no->numFilhos; i++) no->filhos[i] = no->filhos[i+1];
     no->filhos[i] = NULL;
     free(no->filhos[i]);
+
+    if(no->numFilhos == 1 && no->isPalavra == 0){
+        strcat(no->texto, no->filhos[0]->texto);
+        copiaFilhos(no, no->filhos[0]);
+    }
 }
 
 
@@ -264,9 +279,9 @@ No* buscaPrefixo(No* no, char* str, int* nivel){
 // Imprime a árvore por níveis
 // Pré-condição: Arquivo de índices aberto e contendo pelo menos o cabeçalho gravado
 // Pós-condição: Impressão da árvore por níveis
-void imprime_por_niveis(No* raiz, char* str, int c){
-    if(raiz == NULL){
-        printf("Arvore vazia\n");
+void imprime_por_niveis(No *raiz, int c) {
+    if (raiz == NULL || (strcmp(raiz->texto, "") == 0 && raiz->numFilhos == 0)) {
+        printf("Nenhuma palavra na arvore!\n");
         return;
     }
     int nivel = c;
@@ -275,23 +290,20 @@ void imprime_por_niveis(No* raiz, char* str, int c){
     enqueue(fila, raiz);
     enqueue(fila, NULL);
     printf("Nivel %d: ", nivel);
-    while (!fila_vazia(fila)) {
+    while (!fila_vazia(fila)){
         No* no = dequeue(fila);
 
         if (no == NULL){
             printf("\n");
-            if (!fila_vazia(fila)) {
+            if (!fila_vazia(fila) && fila->fim->no != NULL && fila->inicio->prox != NULL) {
                 ++nivel;
                 printf("Nivel %d: ", nivel);
                 enqueue(fila, NULL);
             }
             continue;
         }
-        int len = strlen(str);
-        /*if(no == raiz && (strcmp(str + (len - strlen(no->texto)), no->texto) == 0)){
-            printf("(-:%d)", no->numFilhos);
-        }*/
-        printf("(%s:%d) ", no->texto, no->numFilhos);
+        if(strcmp(no->texto, "") == 0) printf("(-:%d)", no->numFilhos);
+        else printf("(%s:%d) ", no->texto, no->numFilhos);
         if (no->numFilhos != 0) {
             int n = no->numFilhos;
             for (int i = 0; i < n; i++) {
@@ -315,7 +327,7 @@ FILA* cria_fila(){
 //pré-requisitos: Recebe um ponteiro não nulo para fila
 //pós-requisitos: Retorna 1 se a fila for vazio e 0 se não
 int fila_vazia(FILA *f){
-    return f->inicio == NULL;
+    return (f->inicio == NULL);
 }
 
 // enfileira uma chave na fila

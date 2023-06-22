@@ -59,6 +59,11 @@ No* criaNo(char* texto);
 // Pós-condição: move o filho de no para a posição pos
 void moveEsquerda(No* no, int pos);
 
+// Move os filhos de um no para o outro
+// Pré-condição: nos validos nao nulos
+// Pós-condição: move o filho de no para a posição dos filhos do pai
+void copiaFilhos(No* pai, No* filho);
+
 // Remove a palavra especificada da árvore
 // Pré-condição: no aponta para um nó válido, palavra é a palavra a ser removida
 // Pós-condição: remove a palavra da árvore com raiz no
@@ -77,7 +82,7 @@ void inserir(No* raiz, char* chave);
 // Imprime os nós da árvore por níveis
 // Pré-condição: raiz é um nó válido, str é uma string auxiliar
 // Pós-condição: imprime os nós da árvore com raiz raiz por níveis
-void imprime_por_niveis(No* raiz, char* str, int c);
+void imprime_por_niveis(No *raiz, int c);
 
 // Busca um prefixo na árvore
 // Pré-condição: no aponta para um nó válido, str é o prefixo a ser buscado

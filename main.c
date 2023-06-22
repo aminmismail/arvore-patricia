@@ -40,11 +40,11 @@ int main() {
                 int pos = 0;
                 No* no = buscaPrefixo(raiz, text, &pos);
                 if(no == NULL) printf("Prefixo nao encontrado!\n");
-                else imprime_por_niveis(no, text, pos);
+                else imprime_por_niveis(no, pos);
                 break;
             case 6:
                 //Imprime toda a arvore por nivel
-                imprime_por_niveis(raiz, "", 0);
+                imprime_por_niveis(raiz, 0);
                 break;
             case 7:
                 printf("Entre com a palavra a ser inserida: ");
