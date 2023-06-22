@@ -21,77 +21,31 @@ No* criaNoRaiz(){
     return aux;
 }
 
-/*No *buscaPos(No* no, char* text, int *pos) {
-    if (no == NULL) return NULL;
+
+
+
+
+No* buscaPrefixo(No* no, char* str) {
+    No* noAtual = no;
     int i;
-    for (i = 0; i < no->numFilhos && text[0] > no->filhos[i]->texto[0]; i++);
-    if ((i + 1) > no->numFilhos || findFirstDif(text, no->filhos[i]->texto) == 0) {
-        *pos = i;
-        return no;
-    }
-
-    /*else if (isPrefixo(no->filhos[i]->texto, text)){
-        text += strlen(no->filhos[i]->texto);
-        return buscaPos(no->filhos[i], text, pos);
-    }//
-
-    else{
-        text += findFirstDif(text, no->filhos[i]->texto);
-        return buscaPos(no->filhos[i], text, pos);
-    }
-
-}*/
-
-// Realiza busca na arvore de uma palavra
-int buscar(No* no, char* str) {
-    No* noAtual = no;
-    int len = strlen(str), i;
-
-    // Find the appropriate child node
-    for (i = 0; i < noAtual->numFilhos; i++) {
-        if (str[0] == noAtual->filhos[i]->texto[0]) {
-            int k = 0;
-            while (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0' && str[k] == noAtual->filhos[i]->texto[k]) {
-                k++;
-            }
-
-            if (str[k] == '\0' && noAtual->filhos[i]->texto[k] == '\0') {
-                return noAtual->filhos[i]->isPalavra;
-            }
-
-            if (str[k] == '\0' && noAtual->filhos[i]->texto[k] != '\0') {
-                return buscar(noAtual->filhos[i], str + k);
-            }
-
-            break;
-        }
-    }
-
-    return 0;
-}
-
-
-No* buscaNo(No* no, char* str) {
-    No* noAtual = no;
-    int len = strlen(str), i;
     //Percorre os filhos do nó atual
     for (i = 0; i < noAtual->numFilhos ; i++) {
-        if (str[0] == noAtual->filhos[i]->texto[0]) {
+        if (str[0] == noAtual->filhos[i]->texto[0]){
             int k = 0;
             //Percorre o texto do nó filho
             while (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0' && str[k] == noAtual->filhos[i]->texto[k]) {
                 k++;
             }
             //Se o texto do nó e do filho terminaram
-            if (str[k] == '\0' && noAtual->filhos[i]->texto[k] == '\0') {
+            if (str[k] == '\0'){
                 return noAtual->filhos[i];
             }
             //Se o texto do no terminou mas o novo ainda nao
-            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] == '\0') {
-                return buscaNo(noAtual->filhos[i], str + k);
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] == '\0'){
+                return buscaPrefixo(noAtual->filhos[i], str + k);
             }
             //Se o texto do no e do filho ainda nao terminaram (split)
-            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0') {
+            if (str[k] != '\0' && noAtual->filhos[i]->texto[k] != '\0'){
                 return NULL;
             }
         }
@@ -280,7 +234,7 @@ void inserir(No* no, char* str) {
 // Imprime a árvore por níveis
 // Pré-condição: Arquivo de índices aberto e contendo pelo menos o cabeçalho gravado
 // Pós-condição: Impressão da árvore por níveis
-void imprime_por_niveis(No* raiz){
+void imprime_por_niveis(No* raiz, char* str){
     if(raiz == NULL){
         printf("Arvore vazia\n");
         return;
@@ -294,7 +248,7 @@ void imprime_por_niveis(No* raiz){
     while (!fila_vazia(fila)) {
         No* no = dequeue(fila);
 
-        if (no == NULL) {
+        if (no == NULL){
             printf("\n");
             if (!fila_vazia(fila)) {
                 ++nivel;
@@ -303,7 +257,8 @@ void imprime_por_niveis(No* raiz){
             }
             continue;
         }
-        if(no == raiz){
+        int len = strlen(str);
+        if(no == raiz && (strcmp(str + (len - strlen(no->texto)), no->texto) == 0)){
             printf("(-:%d)", no->numFilhos);
         }
         else printf("(%s:%d) ", no->texto, no->numFilhos);

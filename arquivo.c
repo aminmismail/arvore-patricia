@@ -11,6 +11,7 @@ void imprime_menu(){
     printf("3.  Imprimir dicionario\n");
     printf("4.  Carregar arquivo de stopwords\n");
     printf("5.  Imprimir subarvore por niveis\n");
+    printf("6.  Imprimir arvore completa por niveis\n");
     printf("0.  Sair\n\n");
 
     printf("Digite a opcao desejada: ");

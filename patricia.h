@@ -44,9 +44,9 @@ void split(No* noAtual, int i, char restoNovo[], char prefixo[], char novoFilho[
 
 void inserir(No* raiz, char* chave);
 
-void imprime_por_niveis(No* raiz);
+void imprime_por_niveis(No* raiz, char* str);
 
-No* buscaNo(No* no, char* str);
+No* buscaPrefixo(No* no, char* str);
 
 // cria uma fila
 // Pré-condição: nenhuma
