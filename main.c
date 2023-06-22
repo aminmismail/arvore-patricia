@@ -37,13 +37,14 @@ int main() {
                 //Imprimir subarvore por niveis
                 printf("Entre com a palavra: ");
                 scanf("%s%*c", text);
-                No* no = buscaPrefixo(raiz, text);
+                int pos = 0;
+                No* no = buscaPrefixo(raiz, text, &pos);
                 if(no == NULL) printf("Prefixo nao encontrado!\n");
-                else imprime_por_niveis(no, text);
+                else imprime_por_niveis(no, text, pos);
                 break;
             case 6:
                 //Imprime toda a arvore por nivel
-                imprime_por_niveis(raiz, "");
+                imprime_por_niveis(raiz, "", 0);
                 break;
             case 7:
                 printf("Entre com a palavra a ser inserida: ");
@@ -54,6 +55,7 @@ int main() {
                 printf("Entre com a palavra a ser removida: ");
                 scanf("%s%*c", text);
                 remover(raiz, text);
+                break;
             default:
                 printf("Entrada invalida\n");
                 break;
